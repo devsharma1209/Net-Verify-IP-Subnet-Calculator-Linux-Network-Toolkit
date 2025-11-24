@@ -30,7 +30,7 @@ PySubnet-Linux/
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/YourUsername/Net-Verify.git](https://github.com/YourUsername/Net-Verify.git)
+    git clone https://github.com/devsharma1209/PySubnet-Linux.git
     cd Net-Verify
     ```
 
