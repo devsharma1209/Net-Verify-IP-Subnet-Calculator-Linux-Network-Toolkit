@@ -31,7 +31,7 @@ PySubnet-Linux/
 
     ```bash
     git clone https://github.com/devsharma1209/PySubnet-Linux.git
-    cd Net-Verify
+    cd PySubnet-Linux
     ```
 
 2.  **Set executable permissions:**
@@ -113,7 +113,7 @@ To replicate the exact outputs shown above:
 
 ### 1. On any Linux machine (Ubuntu, Kali, EC2, WSL):
 ```bash
-git clone https://github.com/YourUsername/PySubnet-Linux.git
+git clone https://github.com/devsharma1209/PySubnet-Linux.git
 cd PySubnet-Linux
 python3 main.py --mode calc --target 192.168.10.50/24
 ```
@@ -215,7 +215,6 @@ Network            | Broadcast          | Range Start
 10.0.0.160         | 10.0.0.191         | 10.0.0.161
 10.0.0.192         | 10.0.0.223         | 10.0.0.193
 10.0.0.224         | 10.0.0.255         | 10.0.0.225
-...
 ```
 
 ## 🧠 Technical Implementation
