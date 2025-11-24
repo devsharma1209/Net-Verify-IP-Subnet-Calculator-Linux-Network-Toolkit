@@ -16,9 +16,9 @@ Unlike standard subnet calculators, this tool features a **"Live Mode"** that in
 ## 📂 Project Structure
 
 ```text
-Net-Verify/
+PySubnet-Linux/
 │
-├── ip_calc.py         # The "Brain": Handles binary math & subnet logic
+├── core_calc.py         # The "Brain": Handles binary math & subnet logic
 ├── linux_ops.py       # The "Hands": Wraps Linux commands (ip, ping)
 ├── main.py            # The "Face": CLI Interface & Argument Parsing
 ├── requirements.txt   # Dependencies (Standard Library only)
@@ -107,6 +107,116 @@ python3 main.py --target 10.0.0.1/24 --subnet 27
 
 **Result:**
 The tool slices the `/24` network (256 hosts) into multiple `/27` networks (32 hosts each) and prints the range for every slice.
+
+## 🔄 How to Reproduce the Results
+To replicate the exact outputs shown above:
+
+### 1. On any Linux machine (Ubuntu, Kali, EC2, WSL):
+```bash
+git clone https://github.com/YourUsername/PySubnet-Linux.git
+cd PySubnet-Linux
+python3 main.py --mode calc --target 192.168.10.50/24
+```
+
+You should see the same structure:
+- Network ID  
+- Broadcast  
+- Binary Mask  
+- Host Range  
+
+### 2. For Live Mode (requires real Linux networking):
+```bash
+python3 main.py --mode live
+```
+
+You will get:
+- Auto-detected interface IP  
+- /CIDR  
+- Gateway reachability (UP/DOWN)  
+- Neighbor scan (ping)
+
+### 3. For Subnetting:
+```bash
+python3 main.py --target 10.0.0.1/24 --subnet 27
+```
+
+This prints all sliced /27 subnets with ranges.
+
+## 🧪 Sample Output 
+```text
+[ec2-user@ip-172-31-73-60 PySubnet-Linux]$ python3 main.py --mode calc --target 192.168.10.50/24
+
+╔════════════════════════════════════════╗
+║      NET-VERIFY: Subnet & Linux Tool   ║
+╚════════════════════════════════════════╝
+
+
+--- NETWORK DETAILS ---
+IP Address          : 192.168.10.50
+Binary IP           : 11000000.10101000.00001010.00110010
+Network Address     : 192.168.10.0
+Binary Netmask      : 11111111.11111111.11111111.00000000
+CIDR                : /24
+Usable Range        : 192.168.10.1 - 192.168.10.254
+Hosts               : 254
+Private Network     : True
+[ec2-user@ip-172-31-73-60 PySubnet-Linux]$ python3 main.py --mode live
+
+╔════════════════════════════════════════╗
+║      NET-VERIFY: Subnet & Linux Tool   ║
+╚════════════════════════════════════════╝
+
+[*] Mode: LIVE LINUX INTEGRATION
+[*] Auto-detecting IP from OS...
+[+] Detected: 172.31.73.60/20
+
+--- NETWORK DETAILS ---
+IP Address          : 172.31.73.60
+Binary IP           : 10101100.00011111.01001001.00111100
+Network Address     : 172.31.64.0
+Binary Netmask      : 11111111.11111111.11110000.00000000
+CIDR                : /20
+Usable Range        : 172.31.64.1 - 172.31.79.254
+Hosts               : 4,094
+Private Network     : True
+
+--- LIVE REACHABILITY CHECK (Linux Ping) ---
+Target IP            | Status
+-----------------------------------
+172.31.64.0          | DOWN
+172.31.64.1          | UP (Reachable)
+172.31.64.254        | DOWN
+172.31.73.60         | UP (Reachable)
+[ec2-user@ip-172-31-73-60 PySubnet-Linux]$ python3 main.py --target 10.0.0.1/24 --subnet 27
+
+╔════════════════════════════════════════╗
+║      NET-VERIFY: Subnet & Linux Tool   ║
+╚════════════════════════════════════════╝
+
+
+--- NETWORK DETAILS ---
+IP Address          : 10.0.0.1
+Binary IP           : 00001010.00000000.00000000.00000001
+Network Address     : 10.0.0.0
+Binary Netmask      : 11111111.11111111.11111111.00000000
+CIDR                : /24
+Usable Range        : 10.0.0.1 - 10.0.0.254
+Hosts               : 254
+Private Network     : True
+
+--- SUBNETTING into /27 ---
+Network            | Broadcast          | Range Start
+-------------------------------------------------------
+10.0.0.0           | 10.0.0.31          | 10.0.0.1
+10.0.0.32          | 10.0.0.63          | 10.0.0.33
+10.0.0.64          | 10.0.0.95          | 10.0.0.65
+10.0.0.96          | 10.0.0.127         | 10.0.0.97
+10.0.0.128         | 10.0.0.159         | 10.0.0.129
+10.0.0.160         | 10.0.0.191         | 10.0.0.161
+10.0.0.192         | 10.0.0.223         | 10.0.0.193
+10.0.0.224         | 10.0.0.255         | 10.0.0.225
+...
+```
 
 ## 🧠 Technical Implementation
 
