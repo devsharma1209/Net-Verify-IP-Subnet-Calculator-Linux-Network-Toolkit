@@ -3,7 +3,7 @@ import sys
 from core_calc import SubnetVisualizer
 from linux_ops import LinuxOps
 
-# Teammate's ANSI Colors
+# teammate's ANSI colors
 CYAN = "\033[36m"
 RED = "\033[31m"
 RESET = "\033[0m"
@@ -16,7 +16,7 @@ def print_banner():
     print(f"{RESET}")
 
 def print_kv(key, value):
-    """Helper to print Key-Value pairs nicely"""
+    """Helper to print Key-Value pairs clearly"""
     print(f"{RESET}{key:<20}: {CYAN}{value}{RESET}")
 
 def main():
@@ -27,14 +27,14 @@ def main():
     
     args = parser.parse_args()
 
-    # Enable colors on Windows
+    # enable Windows color output if needed
     if sys.platform == 'win32':
         import os
         os.system('')
 
     print_banner()
 
-    # --- MODE SELECTION ---
+    # choose between normal calc mode or live mode
     target_ip = args.target
 
     if args.mode == 'live':
@@ -49,9 +49,10 @@ def main():
             target_ip = "192.168.1.1/24"
     
     if not target_ip:
+        # fallback prompt if user didn't give target
         target_ip = input(f"{RESET}[?] Enter IP (192.168.0.1/24): {CYAN}") or "192.168.0.1/24"
 
-    # --- CALCULATION PHASE ---
+    # main subnet calculation block
     try:
         viz = SubnetVisualizer(target_ip)
         details = viz.get_details()
@@ -67,7 +68,7 @@ def main():
         print_kv("Hosts", details['Usable Hosts'])
         print_kv("Private Network", details['Is Private'])
 
-        # --- SUBNETTING PHASE ---
+        # optional subnet splitting
         if args.subnet:
             print(f"\n--- SUBNETTING into /{args.subnet} ---")
             subnets = viz.get_subnets(args.subnet)
@@ -83,11 +84,11 @@ def main():
                 if len(subnets) > 10:
                     print(f"... and {len(subnets)-10} more.")
 
-        # --- VERIFICATION PHASE (Linux Only) ---
+        # live ping verification (Linux only)
         if args.mode == 'live':
             print("\n--- LIVE REACHABILITY CHECK (Linux Ping) ---")
             
-            # Let's ping the Gateway (usually .1) and the Broadcast-1
+            # Ping Gateway and the Broadcast-1
             net_base = ".".join(details['Network Address'].split('.')[:3])
             
             # Define targets to scan
@@ -107,7 +108,9 @@ def main():
                 print(f"{t:<20} | {status}")
 
     except Exception as e:
+        # hopefully doesn't blow up again
         print(f"\n{RED}[!] Error: {e}{RESET}")
 
 if __name__ == "__main__":
+
     main()
